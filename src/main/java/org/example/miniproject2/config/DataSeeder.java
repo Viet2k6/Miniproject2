@@ -20,14 +20,14 @@ public class DataSeeder {
     @Bean
     public CommandLineRunner seedData() {
         return args -> {
-            if (employeeRepository.count() == 0) {
+            if (departmentRepository.count() == 0) {
                 Department d1 = new Department(null, "IT", "Hà Nội", null);
                 Department d2 = new Department(null, "Marketing", "Hà Nội", null);
                 departmentRepository.saveAll(Arrays.asList(d1, d2));
 
-                Employee e1 = new Employee(null, "Việt", 20, "a.jpg", "ACTIVE", d1);
-                Employee e2 = new Employee(null, "Thành", 22, "b.jpg", "ACTIVE", d1);
-                Employee e3 = new Employee(null, "Tuyến", 28, "c.jpg", "INACTIVE", d2);
+                Employee e1 = new Employee(null, "Việt", 20, null, "ACTIVE", d1);
+                Employee e2 = new Employee(null, "Thành", 22, null, "ACTIVE", d1);
+                Employee e3 = new Employee(null, "Tuyến", 28, null, "INACTIVE", d2);
                 employeeRepository.saveAll(Arrays.asList(e1, e2, e3));
             }
         };
