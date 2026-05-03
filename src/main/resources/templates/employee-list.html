@@ -12,10 +12,42 @@
 </head>
 <body>
 
-<div class="container mt-3">
-    <h3>Danh sách nhân viên</h3>
-    <a href="/create" class="btn btn-success mb-3">Add Employee</a>
-    <table class="table table-bordered">
+<div class="container mt-4">
+    <h3 class="mb-3">Danh sách nhân viên</h3>
+
+    <form method="get" th:action="@{/}" class="form-inline mb-3">
+        <input type="text" name="keyword" class="form-control mr-2"
+               placeholder="Search name" th:value="${keyword}">
+
+        <select name="departmentId" class="form-control mr-2">
+            <option value="">All Department</option>
+            <option th:each="d : ${departments}"
+                    th:value="${d.id}"
+                    th:selected="${d.id == departmentId}"
+                    th:text="${d.name}">
+            </option>
+        </select>
+
+        <input type="number" name="minAge" class="form-control mr-2" placeholder="Min age" th:value="${minAge}">
+        <input type="number" name="maxAge" class="form-control mr-2" placeholder="Max age" th:value="${maxAge}">
+
+        <button type="submit" >Search</button>
+    </form>
+
+
+    <div class="mb-3">
+        <a class="btn btn-outline-primary mr-2"
+           th:href="@{/(sortField='name', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
+            Sort Name
+        </a>
+
+        <a class="btn btn-outline-primary mr-2"
+           th:href="@{/(sortField='age', sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
+            Sort Age
+        </a>
+    </div>
+
+    <table class="table table-bordered table-hover">
         <thead>
         <tr>
             <th>ID</th>
@@ -28,22 +60,60 @@
         </thead>
 
         <tbody>
+        <tr th:if="${#lists.isEmpty(employees)}">
+            <td colspan="6" class="text-center text-danger">
+                Không tìm thấy nhân viên nào
+            </td>
+        </tr>
+
         <tr th:each="e : ${employees}">
             <td th:text="${e.id}"></td>
             <td th:text="${e.name}"></td>
             <td th:text="${e.age}"></td>
-            <td th:text="${e.status}"></td>
-            <td th:text="${e.department.name}"></td>
-
+            <td>
+                <span th:text="${e.status}"
+                      th:classappend="${e.status == 'ACTIVE'} ? 'text-success' : 'text-danger'">
+                </span>
+            </td>
+            <td th:text="${e.department != null ? e.department.name : 'N/A'}"></td>
             <td>
                 <img th:if="${e.avatar != null}"
                      th:src="@{'/uploads/' + ${e.avatar}}"
-                     width="80">
-                <span th:if="${e.avatar == null}">No Image</span>
+                     width="50" height="50"
+                     style="object-fit: cover; border-radius: 5px;">
             </td>
         </tr>
         </tbody>
     </table>
+
+
+    <nav>
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/(page=${currentPage - 1})}">
+                    Previous
+                </a>
+            </li>
+
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/(page=${i})}"
+                   th:text="${i + 1}">
+                </a>
+            </li>
+
+            <li class="page-item"
+                th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/(page=${currentPage + 1})}">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
 </div>
 
 <!-- Optional JavaScript -->
